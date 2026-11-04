@@ -1,0 +1,65 @@
+/* 페이지 전체 */
+body {
+  margin: 0;
+  background: #f5f7fa;
+  color: #243245;
+  font-family: Arial, "Malgun Gothic", sans-serif;
+}
+
+/* 사이트 이름과 소개 */
+header {
+  background: #247b68;
+  color: white;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 40px;
+}
+
+header p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* 과목 선택 영역 */
+main {
+  max-width: 800px;
+  margin: 36px auto;
+  padding: 0 20px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+main p {
+  color: #657286;
+}
+
+/* 과목 버튼 */
+button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 22px;
+  background: white;
+  color: #243245;
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #edf7f2;
+  border-color: #247b68;
+}
+
+button:focus-visible {
+  outline: 3px solid #247b68;
+  outline-offset: 3px;
+}
