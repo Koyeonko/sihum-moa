@@ -5,6 +5,7 @@ const range = document.getElementById("exam-range");
 const input = document.getElementById("range-input");
 const saveButton = document.getElementById("save-range");
 const message = document.getElementById("save-message");
+const sourceInput = document.getElementById("source-input");
 
 let selectedSubject = "";
 
@@ -34,6 +35,14 @@ buttons.forEach((button) => {
     range.textContent =
       savedRange || "아직 등록된 시험 범위가 없습니다.";
     input.value = savedRange;
+    sourceInput.value = "";
+
+try {
+  sourceInput.value =
+    localStorage.getItem(storageKey(selectedSubject) + "-source") || "";
+} catch {
+  message.textContent = "안내 출처를 불러올 수 없습니다.";
+}
     detail.hidden = false;
 
     buttons.forEach((item) => {
@@ -54,6 +63,7 @@ saveButton.addEventListener("click", () => {
   if (!selectedSubject) return;
 
   const text = input.value.trim();
+  const source = sourceInput.value.trim();
 
   if (!text) {
     message.textContent = "시험 범위를 입력해 주세요.";
@@ -62,6 +72,10 @@ saveButton.addEventListener("click", () => {
 
   try {
     localStorage.setItem(storageKey(selectedSubject), text);
+    localStorage.setItem(
+  storageKey(selectedSubject) + "-source",
+  source
+);
     range.textContent = text;
     message.textContent = "이 브라우저에 저장했어요.";
   } catch {
