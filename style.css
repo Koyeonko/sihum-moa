@@ -63,3 +63,27 @@ button:focus-visible {
   outline: 3px solid #247b68;
   outline-offset: 3px;
 }
+/* 선택한 과목 */
+button.selected {
+  background: #247b68;
+  color: white;
+  border-color: #247b68;
+}
+
+/* 시험 범위 상세 영역 */
+#exam-detail {
+  margin-top: 28px;
+  padding: 24px;
+  background: white;
+  border: 1px solid #dce4e8;
+  border-radius: 12px;
+}
+
+#exam-detail h2 {
+  margin-top: 0;
+}
+
+#exam-range {
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
