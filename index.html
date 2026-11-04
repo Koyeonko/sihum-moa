@@ -12,16 +12,24 @@
     <p>우리 반 시험 범위, 모아보자!</p>
   </header>
 
-  <main>
-    <h2>과목별 시험 범위</h2>
-    <p>확인할 과목을 선택하세요.</p>
+ <main>
+  <h2>과목별 시험 범위</h2>
+  <p>확인할 과목을 선택하세요.</p>
 
-    <button type="button">국어</button>
-    <button type="button">수학</button>
-    <button type="button">영어</button>
-    <button type="button">중국어</button>
-    <button type="button">화학</button>
-    <button type="button">생명과학</button>
-  </main>
+  <div id="subject-buttons">
+    <button type="button" data-subject="국어">국어</button>
+    <button type="button" data-subject="수학">수학</button>
+    <button type="button" data-subject="영어">영어</button>
+    <button type="button" data-subject="중국어">중국어</button>
+    <button type="button" data-subject="화학">화학</button>
+    <button type="button" data-subject="생명과학">생명과학</button>
+  </div>
+
+  <section id="exam-detail" hidden>
+    <h2 id="subject-title"></h2>
+    <p id="exam-range"></p>
+  </section>
+</main>
+  <script src="script.js"></script>
 </body>
 </html>
