@@ -114,3 +114,13 @@ button.selected {
 #exam-detail small {
   color: #657286;
 }
+#source-input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 10px 0 16px;
+  padding: 14px;
+  border: 1px solid #dce4e8;
+  border-radius: 8px;
+  font: inherit;
+}
