@@ -87,3 +87,30 @@ button.selected {
   line-height: 1.8;
   white-space: pre-wrap;
 }
+#range-input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid #dce4e8;
+  border-radius: 8px;
+  font: inherit;
+  line-height: 1.7;
+  resize: vertical;
+}
+
+#save-range {
+  width: auto;
+  padding: 12px 24px;
+  background: #247b68;
+  color: white;
+}
+
+#save-message {
+  color: #247b68;
+}
+
+#exam-detail small {
+  color: #657286;
+}
