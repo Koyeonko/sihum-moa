@@ -26,9 +26,21 @@
   </div>
 
   <section id="exam-detail" hidden>
-    <h2 id="subject-title"></h2>
-    <p id="exam-range"></p>
-  </section>
+  <h2 id="subject-title"></h2>
+  <p id="exam-range"></p>
+
+  <label for="range-input">시험 범위 입력</label>
+  <textarea
+    id="range-input"
+    rows="5"
+    placeholder="교과서 쪽수, 프린트 번호, 제외 범위 등을 적어 주세요."
+  ></textarea>
+
+  <button type="button" id="save-range">범위 저장</button>
+  <p id="save-message" role="status"></p>
+
+  <small>현재는 이 브라우저에만 저장됩니다.</small>
+</section>
 </main>
   <script src="script.js"></script>
 </body>
