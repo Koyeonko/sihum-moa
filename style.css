@@ -849,3 +849,39 @@ label {
     animation: none;
   }
 }
+/* 최종 과목별 책 표지 색상 */
+button[data-subject="독작"] {
+  --subject-bg: #fff0f3;
+}
+
+button[data-subject="미적분"] {
+  --subject-bg: #eaf2ff;
+}
+
+button[data-subject="인공지능 수학"] {
+  --subject-bg: #e5f4f7;
+}
+
+button[data-subject="언어와 탐구 생활"] {
+  --subject-bg: #f5eafa;
+}
+
+button[data-subject="사문"] {
+  --subject-bg: #fff5d9;
+}
+
+/* 긴 과목명은 자연스럽게 줄바꿈 */
+#subject-buttons button[data-subject="인공지능 수학"],
+#subject-buttons button[data-subject="언어와 탐구 생활"] {
+  font-size: 19px;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  #subject-buttons button[data-subject="인공지능 수학"],
+  #subject-buttons button[data-subject="언어와 탐구 생활"] {
+    font-size: 16px;
+  }
+}
