@@ -80,7 +80,19 @@ data.forEach((entry, index) => {
 
   // 현재 로그인한 사람이 작성한 항목에만 버튼을 표시합니다.
   if (entry.author_id === session.user.id) {
-    const deleteButton = document.createElement("button");
+  const editButton = document.createElement("button");
+  editButton.type = "button";
+  editButton.textContent = "수정";
+  editButton.style.marginLeft = "12px";
+  editButton.style.width = "auto";
+
+  editButton.addEventListener("click", () => {
+    openRangeEditor(entry, item);
+  });
+
+  item.appendChild(editButton);
+
+  const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.textContent = "삭제";
     deleteButton.setAttribute(
@@ -267,4 +279,130 @@ async function deleteRange(entryId) {
   } finally {
     setRangeBusy(false);
   }
+}
+// 선택한 항목을 수정할 입력창을 표시합니다.
+function openRangeEditor(entry, item) {
+  if (saving) return;
+
+  const editor = document.createElement("span");
+  editor.style.display = "block";
+
+  const contentLabel = document.createElement("label");
+  contentLabel.textContent = "시험 범위 수정";
+
+  const contentField = document.createElement("textarea");
+  contentField.rows = 5;
+  contentField.maxLength = 3000;
+  contentField.value = entry.content;
+  contentField.style.display = "block";
+  contentField.style.width = "100%";
+  contentField.style.boxSizing = "border-box";
+  contentLabel.appendChild(contentField);
+
+  const sourceLabel = document.createElement("label");
+  sourceLabel.textContent = "안내 출처 수정";
+
+  const sourceField = document.createElement("input");
+  sourceField.type = "text";
+  sourceField.maxLength = 200;
+  sourceField.value = entry.source || "";
+  sourceField.style.display = "block";
+  sourceField.style.width = "100%";
+  sourceField.style.boxSizing = "border-box";
+  sourceLabel.appendChild(sourceField);
+
+  const updateButton = document.createElement("button");
+  updateButton.type = "button";
+  updateButton.textContent = "수정 저장";
+
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.textContent = "취소";
+
+  const editorMessage = document.createElement("span");
+  editorMessage.style.display = "block";
+  editorMessage.setAttribute("role", "status");
+
+  // 취소하면 저장하지 않고 원래 항목을 다시 표시합니다.
+  cancelButton.addEventListener("click", () => {
+    if (saving) return;
+    editor.replaceWith(item);
+  });
+
+  updateButton.addEventListener("click", async () => {
+    if (saving) return;
+
+    const content = contentField.value.trim();
+    const source = sourceField.value.trim();
+
+    if (!content) {
+      editorMessage.textContent = "시험 범위를 입력해 주세요.";
+      return;
+    }
+
+    if (content.length > 3000 || source.length > 200) {
+      editorMessage.textContent =
+        "시험 범위는 3,000자, 출처는 200자 이내로 입력해 주세요.";
+      return;
+    }
+
+    setRangeBusy(true);
+    updateButton.disabled = true;
+    cancelButton.disabled = true;
+    contentField.disabled = true;
+    sourceField.disabled = true;
+    editorMessage.textContent = "수정 내용을 저장 중이에요.";
+
+    try {
+      const session = await getExamSession();
+
+      if (!session) {
+        throw new Error("먼저 로그인해 주세요.");
+      }
+
+      const { data, error } = await window.examDb
+        .from("exam_ranges")
+        .update({
+          content: content,
+          source: source
+        })
+        .eq("id", entry.id)
+        .eq("author_id", session.user.id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error(
+          "항목이 삭제됐거나 수정 권한이 없어요."
+        );
+      }
+
+      const loaded = await loadRanges();
+
+      message.textContent = loaded
+        ? "시험 범위를 수정했어요."
+        : "수정은 저장됐지만 목록을 불러오지 못했어요. 과목 버튼을 다시 눌러 주세요.";
+    } catch (error) {
+      editorMessage.textContent =
+        "수정하지 못했어요: " + error.message;
+    } finally {
+      setRangeBusy(false);
+      updateButton.disabled = false;
+      cancelButton.disabled = false;
+      contentField.disabled = false;
+      sourceField.disabled = false;
+    }
+  });
+
+  editor.append(
+    contentLabel,
+    sourceLabel,
+    updateButton,
+    cancelButton,
+    editorMessage
+  );
+
+  item.replaceWith(editor);
+  contentField.focus();
 }
