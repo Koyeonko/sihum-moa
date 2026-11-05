@@ -303,3 +303,305 @@ textarea:disabled {
     transition: none;
   }
 }
+/* 시험모아 — 파스텔 테마 */
+body {
+  background: #f7f5fc;
+  color: #302b43;
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+
+/* 상단 제목 */
+header {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 24px;
+  background: linear-gradient(125deg, #eee5ff, #fcebf4 65%, #e8f2ff);
+  color: #3e315d;
+  border-bottom: 1px solid #e9def4;
+}
+
+header::before,
+header::after {
+  content: "";
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+header::before {
+  width: 190px;
+  height: 190px;
+  left: -65px;
+  top: -80px;
+}
+
+header::after {
+  width: 140px;
+  height: 140px;
+  right: -30px;
+  bottom: -90px;
+}
+
+header h1 {
+  position: relative;
+  margin-bottom: 12px;
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+header p {
+  position: relative;
+  color: #615273;
+  font-size: 16px;
+}
+
+main {
+  max-width: 880px;
+  margin-top: 30px;
+}
+
+h2 {
+  color: #3e3551;
+}
+
+main p {
+  color: #655e75;
+}
+
+/* 공통 버튼과 포커스 */
+button {
+  border-color: #ded7eb;
+  color: #493d60;
+  border-radius: 12px;
+}
+
+button:hover:not(:disabled) {
+  background: #f0eafa;
+  border-color: #8b6bb5;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline-color: #7754a6;
+}
+
+/* 로그인 및 상세 영역 */
+#auth-box,
+#exam-detail {
+  background: #ffffff;
+  border: 1px solid #e8e1f0;
+  border-radius: 22px;
+  box-shadow: 0 8px 24px rgba(74, 46, 112, 0.05);
+}
+
+#auth-box {
+  border-top: 4px solid #d2bde9;
+}
+
+#auth-box h2 {
+  font-size: 20px;
+}
+
+#signed-in p,
+#save-message,
+#auth-message {
+  color: #64458c;
+}
+
+/* 과목별 파스텔 카드 */
+#subject-buttons {
+  gap: 14px;
+}
+
+button[data-subject] {
+  --subject-bg: #f0eafa;
+  background: var(--subject-bg);
+  min-height: 96px;
+  padding: 18px 14px;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  color: #41394f;
+  font-size: 18px;
+  text-align: left;
+  box-shadow: 0 3px 8px rgba(60, 40, 90, 0.03);
+}
+
+button[data-subject="국어"] {
+  --subject-bg: #fff0f3;
+}
+
+button[data-subject="수학"] {
+  --subject-bg: #eaf2ff;
+}
+
+button[data-subject="영어"] {
+  --subject-bg: #eeeaff;
+}
+
+button[data-subject="중국어"] {
+  --subject-bg: #fff3e3;
+}
+
+button[data-subject="화학"] {
+  --subject-bg: #e8f5f0;
+}
+
+button[data-subject="생명과학"] {
+  --subject-bg: #f2f4e5;
+}
+
+button[data-subject]::before {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 5px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+button[data-subject]:hover:not(:disabled) {
+  background: var(--subject-bg);
+  border-color: #b7a0d4;
+}
+
+button[data-subject].selected,
+button[data-subject].selected:hover:not(:disabled) {
+  background: var(--subject-bg);
+  color: #513278;
+  border-color: #8060aa;
+  box-shadow: 0 0 0 3px #eee6f7;
+}
+
+button[data-subject].selected::before {
+  opacity: 1;
+  background: #8060aa;
+}
+
+/* 입력칸 */
+input,
+textarea {
+  background: #fcfbfe;
+  border-color: #ded6e9;
+  border-radius: 12px;
+  color: #302b43;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #777080;
+}
+
+input:focus,
+textarea:focus {
+  background: white;
+  border-color: #997cbd;
+}
+
+label {
+  color: #514561;
+  font-size: 15px;
+}
+
+/* 주요 버튼 */
+#login-button,
+#save-range {
+  background: #7955a5;
+  border-color: #7955a5;
+  color: white;
+  box-shadow: 0 3px 8px rgba(99, 64, 145, 0.12);
+}
+
+#login-button:hover:not(:disabled),
+#save-range:hover:not(:disabled) {
+  background: #65438e;
+  border-color: #65438e;
+}
+
+#signup-button,
+#logout-button {
+  background: #f5effb;
+  color: #65438e;
+  border-color: #e1d5ee;
+}
+
+/* 등록된 범위 카드 */
+#exam-range {
+  color: #3e354d;
+}
+
+#exam-range > span {
+  padding: 20px;
+  background: #fcfaff;
+  border: 1px solid #e9e0f2;
+  border-left: 4px solid #c8b2e1;
+  border-radius: 14px;
+}
+
+#exam-range button {
+  background: white;
+  border-color: #ded3eb;
+  color: #65438e;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+#exam-range button:hover:not(:disabled) {
+  background: #f0e8fa;
+  border-color: #a48bbf;
+}
+
+#exam-range button[aria-label$="시험 범위 삭제"] {
+  background: #fff7f8;
+  border-color: #efd8df;
+  color: #a03e58;
+}
+
+#exam-range button[aria-label$="시험 범위 삭제"]:hover:not(:disabled) {
+  background: #fce9ee;
+  border-color: #ce91a2;
+}
+
+#exam-detail small {
+  color: #70667d;
+}
+
+/* 휴대폰 화면 */
+@media (max-width: 600px) {
+  header {
+    padding: 38px 18px;
+  }
+
+  header h1 {
+    font-size: 36px;
+  }
+
+  header p {
+    font-size: 14px;
+  }
+
+  #auth-box,
+  #exam-detail {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  #subject-buttons {
+    gap: 10px;
+  }
+
+  button[data-subject] {
+    min-height: 86px;
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 15px;
+  }
+
+  #exam-range > span {
+    padding: 16px;
+  }
+}
