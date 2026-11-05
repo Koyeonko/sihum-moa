@@ -34,15 +34,8 @@ buttons.forEach((button) => {
 
     range.textContent =
       savedRange || "아직 등록된 시험 범위가 없습니다.";
-    input.value = savedRange;
-    sourceInput.value = "";
-
-try {
-  sourceInput.value =
-    localStorage.getItem(storageKey(selectedSubject) + "-source") || "";
-} catch {
-  message.textContent = "안내 출처를 불러올 수 없습니다.";
-}
+    input.value = "";
+sourceInput.value = "";
     detail.hidden = false;
 
     buttons.forEach((item) => {
@@ -58,7 +51,7 @@ try {
   });
 });
 
-// 선택한 과목의 시험 범위 저장
+// 선택한 과목에 새 시험 범위 추가
 saveButton.addEventListener("click", () => {
   if (!selectedSubject) return;
 
@@ -66,18 +59,33 @@ saveButton.addEventListener("click", () => {
   const source = sourceInput.value.trim();
 
   if (!text) {
-    message.textContent = "시험 범위를 입력해 주세요.";
+    message.textContent = "추가할 시험 범위를 입력해 주세요.";
     return;
   }
 
   try {
-    localStorage.setItem(storageKey(selectedSubject), text);
-    localStorage.setItem(
-  storageKey(selectedSubject) + "-source",
-  source
-);
-    range.textContent = text;
-    message.textContent = "이 브라우저에 저장했어요.";
+    // 기존에 저장한 내용을 불러옵니다.
+    const previous =
+      localStorage.getItem(storageKey(selectedSubject)) || "";
+
+    // 이번에 입력한 범위에 출처를 붙입니다.
+    const newEntry = source
+      ? `${text}\n안내 출처: ${source}`
+      : text;
+
+    // 기존 내용 아래에 새 내용을 추가합니다.
+    const updated = previous
+      ? `${previous}\n\n${newEntry}`
+      : newEntry;
+
+    localStorage.setItem(storageKey(selectedSubject), updated);
+
+    range.textContent = updated;
+
+    // 다음 내용을 입력할 수 있도록 입력 칸을 비웁니다.
+    input.value = "";
+    sourceInput.value = "";
+    message.textContent = "시험 범위를 추가했어요.";
   } catch {
     message.textContent =
       "저장하지 못했어요. 브라우저의 저장 설정을 확인해 주세요.";
