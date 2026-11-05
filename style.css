@@ -1,165 +1,305 @@
-/* 페이지 전체 */
+/* 페이지 기본 설정 */
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   background: #f5f7fa;
   color: #243245;
   font-family: Arial, "Malgun Gothic", sans-serif;
+  line-height: 1.6;
 }
 
-/* 사이트 이름과 소개 */
+/* 사이트 이름 */
 header {
+  padding: 48px 20px;
   background: #247b68;
   color: white;
-  padding: 48px 24px;
   text-align: center;
 }
 
 h1 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: 40px;
+  letter-spacing: -1px;
 }
 
 header p {
   margin: 0;
-  line-height: 1.6;
 }
 
-/* 과목 선택 영역 */
 main {
-  max-width: 800px;
-  margin: 36px auto;
+  max-width: 860px;
+  margin: 32px auto 60px;
   padding: 0 20px;
 }
 
 h2 {
-  font-size: 24px;
+  font-size: 23px;
+  letter-spacing: -0.5px;
 }
 
 main p {
-  color: #657286;
+  color: #526174;
 }
 
-/* 과목 버튼 */
+/* 공통 버튼 */
 button {
-  width: 100%;
-  margin: 8px 0;
-  padding: 22px;
+  min-height: 44px;
+  padding: 11px 18px;
+  border: 1px solid #d6e0e5;
+  border-radius: 10px;
   background: white;
   color: #243245;
-  border: 1px solid #dce4e8;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: left;
+  font: inherit;
+  font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background: #edf7f2;
   border-color: #247b68;
-}
-
-button:focus-visible {
-  outline: 3px solid #247b68;
-  outline-offset: 3px;
-}
-/* 선택한 과목 */
-button.selected {
-  background: #247b68;
-  color: white;
-  border-color: #247b68;
-}
-
-/* 시험 범위 상세 영역 */
-#exam-detail {
-  margin-top: 28px;
-  padding: 24px;
-  background: white;
-  border: 1px solid #dce4e8;
-  border-radius: 12px;
-}
-
-#exam-detail h2 {
-  margin-top: 0;
-}
-
-#exam-range {
-  line-height: 1.8;
-  white-space: pre-wrap;
-}
-#range-input {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  margin-top: 10px;
-  padding: 14px;
-  border: 1px solid #dce4e8;
-  border-radius: 8px;
-  font: inherit;
-  line-height: 1.7;
-  resize: vertical;
-}
-
-#save-range {
-  width: auto;
-  padding: 12px 24px;
-  background: #247b68;
-  color: white;
-}
-
-#save-message {
-  color: #247b68;
-}
-
-#exam-detail small {
-  color: #657286;
-}
-#source-input {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  margin: 10px 0 16px;
-  padding: 14px;
-  border: 1px solid #dce4e8;
-  border-radius: 8px;
-  font: inherit;
-}
-#auth-box {
-  margin-bottom: 32px;
-  padding: 24px;
-  background: white;
-  border: 1px solid #dce4e8;
-  border-radius: 12px;
-}
-
-#auth-form label {
-  display: block;
-  margin-top: 14px;
-}
-
-#auth-form input {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  margin-top: 8px;
-  padding: 12px;
-  border: 1px solid #dce4e8;
-  border-radius: 8px;
-  font: inherit;
-}
-
-#auth-box button {
-  width: auto;
-  padding: 12px 20px;
-  font-size: 15px;
-}
-
-#auth-message {
-  line-height: 1.7;
-  overflow-wrap: anywhere;
 }
 
 button:disabled {
   opacity: 0.5;
   cursor: wait;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #247b68;
+  outline-offset: 3px;
+}
+
+/* 과목 버튼: 컴퓨터에서는 세 열 */
+#subject-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+button[data-subject] {
+  width: 100%;
+  min-height: 76px;
+  margin: 0;
+  padding: 18px 12px;
+  font-size: 18px;
+  text-align: center;
+}
+
+button[data-subject].selected {
+  background: #247b68;
+  border-color: #247b68;
+  color: white;
+}
+
+/* 로그인과 시험 범위 영역 */
+#auth-box,
+#exam-detail {
+  padding: 26px;
+  border: 1px solid #dce4e8;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 16px rgba(36, 50, 69, 0.04);
+}
+
+#auth-box {
+  margin-bottom: 30px;
+}
+
+#exam-detail {
+  margin-top: 26px;
+}
+
+#auth-box h2,
+#exam-detail h2 {
+  margin-top: 0;
+}
+
+/* 입력칸 */
+label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 700;
+}
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 8px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #cbd6de;
+  border-radius: 9px;
+  background: white;
+  color: #243245;
+  font: inherit;
+}
+
+textarea {
+  min-height: 130px;
+  line-height: 1.7;
+  resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #687789;
+}
+
+input:disabled,
+textarea:disabled {
+  background: #f1f4f6;
+}
+
+/* 주요 동작 버튼 */
+#login-button,
+#save-range {
+  background: #247b68;
+  border-color: #247b68;
+  color: white;
+}
+
+#login-button:hover:not(:disabled),
+#save-range:hover:not(:disabled) {
+  background: #1b6253;
+  border-color: #1b6253;
+}
+
+#auth-box button {
+  margin: 4px 6px 4px 0;
+}
+
+#save-range {
+  margin-top: 4px;
+}
+
+/* 시험 범위 항목 카드 */
+#exam-range {
+  margin: 20px 0 26px;
+  color: #243245;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+#exam-range > span {
+  display: block;
+  padding: 18px;
+  border: 1px solid #dce6e2;
+  border-radius: 12px;
+  background: #f8fbf9;
+}
+
+/* 카드 안의 수정·삭제·저장·취소 버튼 */
+#exam-range button {
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 8px 14px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+#exam-range button + button {
+  margin-left: 8px;
+}
+
+#exam-range button[aria-label$="시험 범위 삭제"] {
+  background: #fff5f5;
+  border-color: #eccccc;
+  color: #a12b2b;
+}
+
+#exam-range button[aria-label$="시험 범위 삭제"]:hover {
+  background: #ffe8e8;
+  border-color: #c97777;
+}
+
+#exam-range label {
+  margin-top: 8px;
+}
+
+#exam-range textarea,
+#exam-range input {
+  font-weight: 400;
+}
+
+/* 처리 결과와 안내 */
+#save-message,
+#auth-message {
+  color: #245f51;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+#save-message:empty,
+#auth-message:empty {
+  display: none;
+}
+
+#signed-in p {
+  color: #245f51;
+  font-weight: 700;
+}
+
+#exam-detail small {
+  display: block;
+  margin-top: 14px;
+  color: #526174;
+  line-height: 1.7;
+}
+
+/* 휴대폰에서는 과목 버튼을 두 열로 표시 */
+@media (max-width: 600px) {
+  header {
+    padding: 32px 16px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  main {
+    margin-top: 20px;
+    padding: 0 14px;
+  }
+
+  h2 {
+    font-size: 21px;
+  }
+
+  #subject-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  button[data-subject] {
+    min-height: 64px;
+    font-size: 16px;
+  }
+
+  #auth-box,
+  #exam-detail {
+    padding: 18px;
+  }
+
+  #exam-range > span {
+    padding: 14px;
+  }
+}
+
+/* 움직임을 줄이도록 설정한 사용자 배려 */
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
 }
