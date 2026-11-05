@@ -146,6 +146,24 @@ buttons.forEach((button) => {
     input.value = "";
     sourceInput.value = "";
     detail.hidden = false;
+    // 책장을 숨기고 선택한 과목의 책을 펼칩니다.
+document.getElementById("bookshelf").hidden = true;
+
+const openedBook = document.querySelector(".open-book");
+const coverColor = getComputedStyle(button)
+  .getPropertyValue("--subject-bg").trim();
+
+openedBook.style.setProperty(
+  "--book-cover",
+  coverColor || "#eeeaff"
+);
+
+// 다시 열 때도 애니메이션을 실행합니다.
+openedBook.classList.remove("book-opening");
+void openedBook.offsetWidth;
+openedBook.classList.add("book-opening");
+
+title.focus({ preventScroll: true });
 
     buttons.forEach((item) => {
       const isSelected = item === button;
@@ -406,3 +424,46 @@ function openRangeEditor(entry, item) {
   item.replaceWith(editor);
   contentField.focus();
 }
+// 책을 덮고 과목 선택 화면으로 돌아갑니다.
+document.getElementById("close-book")
+  .addEventListener("click", () => {
+    if (saving) {
+      message.textContent =
+        "처리가 끝난 뒤 책을 덮어 주세요.";
+      return;
+    }
+
+    const hasDraft =
+      input.value.trim() ||
+      sourceInput.value.trim() ||
+      range.querySelector("textarea");
+
+    if (hasDraft && !window.confirm(
+      "저장하지 않은 입력은 사라져요. 책을 덮을까요?"
+    )) {
+      return;
+    }
+
+    // 진행 중인 이전 조회 결과는 표시하지 않습니다.
+    loadingNumber++;
+
+    detail.hidden = true;
+    document.getElementById("bookshelf").hidden = false;
+
+    const previousButton = [...buttons].find(
+      (button) => button.dataset.subject === selectedSubject
+    );
+
+    selectedSubject = "";
+    input.value = "";
+    sourceInput.value = "";
+    range.replaceChildren();
+    message.textContent = "";
+
+    buttons.forEach((button) => {
+      button.classList.remove("selected");
+      button.setAttribute("aria-pressed", "false");
+    });
+
+    if (previousButton) previousButton.focus();
+  });
