@@ -8,34 +8,99 @@ const message = document.getElementById("save-message");
 const sourceInput = document.getElementById("source-input");
 
 let selectedSubject = "";
+let loadingNumber = 0;
+let saving = false;
 
-// 과목별로 서로 다른 이름으로 저장합니다.
-function storageKey(subject) {
-  return `siheom-moa-range-${subject}`;
+// 저장된 내용의 줄바꿈을 화면에도 표시합니다.
+range.style.whiteSpace = "pre-wrap";
+saveButton.textContent = "범위 추가";
+
+// 로그인 상태 확인
+async function getExamSession() {
+  if (!window.examDb) {
+    throw new Error("Supabase 연결 설정을 확인해 주세요.");
+  }
+
+  const { data, error } = await window.examDb.auth.getSession();
+
+  if (error) throw error;
+
+  return data.session;
+}
+
+// 선택한 과목의 공용 시험 범위 불러오기
+async function loadRanges() {
+  const subject = selectedSubject;
+  if (!subject) return;
+
+  const requestNumber = ++loadingNumber;
+  range.textContent = "시험 범위를 불러오는 중이에요.";
+
+  try {
+    const session = await getExamSession();
+
+    // 다른 과목으로 이동했다면 이전 요청은 표시하지 않습니다.
+    if (requestNumber !== loadingNumber) return false;
+
+    if (!session) {
+      range.textContent = "로그인 후 시험 범위를 확인할 수 있어요.";
+      return false;
+    }
+
+    const { data, error } = await window.examDb
+      .from("exam_ranges")
+      .select("id, content, source, created_at")
+      .eq("subject", subject)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+    if (requestNumber !== loadingNumber) return false;
+
+    range.textContent = data.length
+      ? data.map((entry, index) => {
+          const sourceText = entry.source
+            ? `\n안내 출처: ${entry.source}`
+            : "";
+
+          return `${index + 1}. ${entry.content}${sourceText}`;
+        }).join("\n\n")
+      : "아직 등록된 시험 범위가 없습니다.";
+
+    return true;
+  } catch (error) {
+    if (requestNumber !== loadingNumber) return false;
+
+    range.textContent = "시험 범위를 불러오지 못했어요.";
+    message.textContent = "불러오기 오류: " + error.message;
+    return false;
+  }
+}
+
+// 저장 중에는 중복 클릭과 과목 변경을 막습니다.
+function setRangeBusy(busy) {
+  saving = busy;
+  saveButton.disabled = busy;
+  input.disabled = busy;
+  sourceInput.disabled = busy;
+
+  buttons.forEach((button) => {
+    button.disabled = busy;
+  });
+
+  saveButton.textContent = busy ? "저장 중…" : "범위 추가";
 }
 
 // 과목 선택
 buttons.forEach((button) => {
   button.addEventListener("click", () => {
-    selectedSubject = button.dataset.subject;
+    if (saving) return;
 
+    selectedSubject = button.dataset.subject;
     title.textContent = `${selectedSubject} 시험 범위`;
     message.textContent = "";
-
-    let savedRange = "";
-
-    try {
-      savedRange =
-        localStorage.getItem(storageKey(selectedSubject)) || "";
-    } catch {
-      message.textContent =
-        "브라우저에서 저장된 내용을 불러올 수 없습니다.";
-    }
-
-    range.textContent =
-      savedRange || "아직 등록된 시험 범위가 없습니다.";
     input.value = "";
-sourceInput.value = "";
+    sourceInput.value = "";
     detail.hidden = false;
 
     buttons.forEach((item) => {
@@ -44,6 +109,8 @@ sourceInput.value = "";
       item.setAttribute("aria-pressed", String(isSelected));
     });
 
+    loadRanges();
+
     detail.scrollIntoView({
       behavior: "smooth",
       block: "nearest"
@@ -51,10 +118,11 @@ sourceInput.value = "";
   });
 });
 
-// 선택한 과목에 새 시험 범위 추가
-saveButton.addEventListener("click", () => {
-  if (!selectedSubject) return;
+// 공용 데이터베이스에 새 시험 범위 추가
+saveButton.addEventListener("click", async () => {
+  if (!selectedSubject || saving) return;
 
+  const subject = selectedSubject;
   const text = input.value.trim();
   const source = sourceInput.value.trim();
 
@@ -63,31 +131,62 @@ saveButton.addEventListener("click", () => {
     return;
   }
 
+  if (text.length > 3000 || source.length > 200) {
+    message.textContent =
+      "시험 범위는 3,000자, 안내 출처는 200자 이내로 입력해 주세요.";
+    return;
+  }
+
+  setRangeBusy(true);
+  message.textContent = "저장 중이에요.";
+
   try {
-    // 기존에 저장한 내용을 불러옵니다.
-    const previous =
-      localStorage.getItem(storageKey(selectedSubject)) || "";
+    const session = await getExamSession();
 
-    // 이번에 입력한 범위에 출처를 붙입니다.
-    const newEntry = source
-      ? `${text}\n안내 출처: ${source}`
-      : text;
+    if (!session) {
+      message.textContent = "먼저 로그인해 주세요.";
+      return;
+    }
 
-    // 기존 내용 아래에 새 내용을 추가합니다.
-    const updated = previous
-      ? `${previous}\n\n${newEntry}`
-      : newEntry;
+    const { error } = await window.examDb
+      .from("exam_ranges")
+      .insert({
+        subject: subject,
+        content: text,
+        source: source,
+        author_id: session.user.id
+      });
 
-    localStorage.setItem(storageKey(selectedSubject), updated);
+    if (error) throw error;
 
-    range.textContent = updated;
-
-    // 다음 내용을 입력할 수 있도록 입력 칸을 비웁니다.
+    // 저장에 성공했을 때만 입력 칸을 비웁니다.
     input.value = "";
     sourceInput.value = "";
-    message.textContent = "시험 범위를 추가했어요.";
-  } catch {
-    message.textContent =
-      "저장하지 못했어요. 브라우저의 저장 설정을 확인해 주세요.";
+
+    const loaded = await loadRanges();
+
+    message.textContent = loaded
+      ? "공용 시험 범위에 추가했어요."
+      : "저장은 완료됐지만 목록을 다시 불러오지 못했어요. 과목 버튼을 다시 눌러 주세요.";
+  } catch (error) {
+    message.textContent = "저장하지 못했어요: " + error.message;
+  } finally {
+    setRangeBusy(false);
   }
 });
+
+// 로그인하거나 로그아웃하면 표시 내용도 갱신합니다.
+if (window.examDb) {
+  window.examDb.auth.onAuthStateChange(() => {
+    // 진행 중인 이전 조회 결과는 표시하지 않습니다.
+    loadingNumber++;
+    range.textContent = "";
+
+    setTimeout(() => {
+      if (selectedSubject && !saving) {
+        message.textContent = "";
+        loadRanges();
+      }
+    }, 0);
+  });
+}
