@@ -49,7 +49,7 @@ async function loadRanges() {
 
     const { data, error } = await window.examDb
       .from("exam_ranges")
-      .select("id, content, source, created_at")
+      .select("id, content, source, created_at, author_id")
       .eq("subject", subject)
       .order("created_at", { ascending: true })
       .order("id", { ascending: true });
@@ -57,16 +57,48 @@ async function loadRanges() {
     if (error) throw error;
     if (requestNumber !== loadingNumber) return false;
 
-    range.textContent = data.length
-      ? data.map((entry, index) => {
-          const sourceText = entry.source
-            ? `\n안내 출처: ${entry.source}`
-            : "";
+    range.replaceChildren();
 
-          return `${index + 1}. ${entry.content}${sourceText}`;
-        }).join("\n\n")
-      : "아직 등록된 시험 범위가 없습니다.";
+if (data.length === 0) {
+  range.textContent = "아직 등록된 시험 범위가 없습니다.";
+}
 
+data.forEach((entry, index) => {
+  const item = document.createElement("span");
+  item.style.display = "block";
+  item.style.marginBottom = "18px";
+
+  const content = document.createElement("span");
+  const sourceText = entry.source
+    ? `\n안내 출처: ${entry.source}`
+    : "";
+
+  content.textContent =
+    `${index + 1}. ${entry.content}${sourceText}`;
+
+  item.appendChild(content);
+
+  // 현재 로그인한 사람이 작성한 항목에만 버튼을 표시합니다.
+  if (entry.author_id === session.user.id) {
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.textContent = "삭제";
+    deleteButton.setAttribute(
+      "aria-label",
+      `${index + 1}번 시험 범위 삭제`
+    );
+    deleteButton.style.marginLeft = "12px";
+    deleteButton.style.width = "auto";
+
+    deleteButton.addEventListener("click", () => {
+      deleteRange(entry.id);
+    });
+
+    item.appendChild(deleteButton);
+  }
+
+  range.appendChild(item);
+});
     return true;
   } catch (error) {
     if (requestNumber !== loadingNumber) return false;
@@ -189,4 +221,50 @@ if (window.examDb) {
       }
     }, 0);
   });
+}
+// 내가 작성한 시험 범위 한 개 삭제
+async function deleteRange(entryId) {
+  if (saving) return;
+
+  const confirmed = window.confirm(
+    "이 시험 범위를 삭제할까요?\n삭제하면 되돌릴 수 없어요."
+  );
+
+  if (!confirmed) return;
+
+  setRangeBusy(true);
+  message.textContent = "삭제 중이에요.";
+
+  try {
+    const session = await getExamSession();
+
+    if (!session) {
+      throw new Error("먼저 로그인해 주세요.");
+    }
+
+    const { data, error } = await window.examDb
+      .from("exam_ranges")
+      .delete()
+      .eq("id", entryId)
+      .eq("author_id", session.user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error(
+        "이미 삭제된 항목이거나 삭제 권한이 없어요. 과목을 다시 선택해 주세요."
+      );
+    }
+
+    const loaded = await loadRanges();
+
+    message.textContent = loaded
+      ? "선택한 시험 범위를 삭제했어요."
+      : "삭제는 완료됐지만 목록을 불러오지 못했어요. 과목 버튼을 다시 눌러 주세요.";
+  } catch (error) {
+    message.textContent = "삭제하지 못했어요: " + error.message;
+  } finally {
+    setRangeBusy(false);
+  }
 }
