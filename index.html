@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>시험모아</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <header>
@@ -47,43 +47,57 @@
 
   <p id="auth-message" role="status"></p>
 </section>
-  <h2>과목별 시험 범위</h2>
-  <p>확인할 과목을 선택하세요.</p>
+  <section id="bookshelf" aria-label="과목 선택">
+  <h2>나의 시험 책장</h2>
+  <p>과목 책을 펼쳐 시험 범위를 확인하고 추가해 보세요.</p>
 
   <div id="subject-buttons">
-    <button type="button" data-subject="국어">국어</button>
-    <button type="button" data-subject="수학">수학</button>
-    <button type="button" data-subject="영어">영어</button>
-    <button type="button" data-subject="중국어">중국어</button>
-    <button type="button" data-subject="화학">화학</button>
-    <button type="button" data-subject="생명과학">생명과학</button>
+    <button type="button" data-subject="국어"
+      aria-controls="exam-detail" aria-pressed="false">국어</button>
+    <button type="button" data-subject="수학"
+      aria-controls="exam-detail" aria-pressed="false">수학</button>
+    <button type="button" data-subject="영어"
+      aria-controls="exam-detail" aria-pressed="false">영어</button>
+    <button type="button" data-subject="중국어"
+      aria-controls="exam-detail" aria-pressed="false">중국어</button>
+    <button type="button" data-subject="화학"
+      aria-controls="exam-detail" aria-pressed="false">화학</button>
+    <button type="button" data-subject="생명과학"
+      aria-controls="exam-detail" aria-pressed="false">생명과학</button>
+  </div>
+</section>
+
+<section id="exam-detail" hidden aria-labelledby="subject-title">
+  <div class="book-toolbar">
+    <h2 id="subject-title" tabindex="-1"></h2>
+    <button type="button" id="close-book">책 덮기</button>
   </div>
 
-  <section id="exam-detail" hidden>
-  <h2 id="subject-title"></h2>
-  <p id="exam-range"></p>
+  <div class="open-book">
+    <section class="book-page page-left" aria-label="등록된 시험 범위">
+      <p class="page-caption">함께 모은 시험 정보</p>
+      <h3>시험 범위</h3>
+      <div id="exam-range"></div>
+      <small>최신 내용은 책을 다시 열어 확인하세요.</small>
+    </section>
 
-  <label for="range-input">시험 범위 입력</label>
-  <textarea
-    id="range-input"
-    rows="5"
-    placeholder="교과서 쪽수, 프린트 번호, 제외 범위 등을 적어 주세요."
-  ></textarea>
-   <label for="source-input">안내 출처</label>
-<input
-  type="text"
-  id="source-input"
-  placeholder="예: 11월 4일 화학 수업 안내"
-  maxlength="200"
-> 
+    <section class="book-page page-right" aria-label="시험 범위 추가">
+      <p class="page-caption">새로운 내용을 기록해요</p>
+      <h3>범위 추가하기</h3>
 
-<button type="button" id="save-range">범위 추가</button>
-  <p id="save-message" role="status"></p>
+      <label for="range-input">시험 범위</label>
+      <textarea id="range-input" rows="6" maxlength="3000"
+        placeholder="교과서 쪽수, 프린트 번호, 제외 범위 등을 적어 주세요."></textarea>
 
-<small>
-  로그인한 사용자들이 함께 확인하는 시험 범위입니다.
-  최신 내용은 과목 버튼을 다시 눌러 확인하세요.
-</small>
+      <label for="source-input">안내 출처</label>
+      <input type="text" id="source-input" maxlength="200"
+        placeholder="예: 11월 4일 화학 수업 안내">
+
+      <button type="button" id="save-range">범위 추가</button>
+      <p id="save-message" role="status"></p>
+      <small>로그인한 사용자들과 함께 확인하는 내용입니다.</small>
+    </section>
+  </div>
 </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -95,3 +109,9 @@
 <script src="supabase-config.js"></script>
 <script src="auth.js"></script>
 <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth.js"></script>
+<script src="script.js?v=4"></script>
+</body>
+</html>
